@@ -2,7 +2,6 @@
 #include "ui_mainwindow.h"
 #include "packetclass.h"
 #include <algorithm>
-#include <QDateTime>
 
 using namespace std;
 
@@ -16,10 +15,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pbStart,SIGNAL(clicked()),SLOT(slotCapture()));
     connect(ui->pbSort,SIGNAL(clicked()),SLOT(slotSort()));
 
-    int64_t file_size(const std::string filename);
-
-    mSize_ip = sizeof(struct sniff_ip); // инициализируем размер структуры
     //mSize_ethernet = sizeof(struct sniff_ethernet);
+    mSize_ip = sizeof(struct sniff_ip); // инициализируем размер структуры
     //mSize_tcp = sizeof(struct sniff_tcp);
 }
 
@@ -27,21 +24,6 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-int64_t file_size(const std::string filename)
-{
-    std::ifstream file(filename.c_str(), std::ifstream::in | std::ifstream::binary);
-
-    if (!file.is_open()) {
-        return -1;
-    }
-
-    file.seekg(0, std::ios::end);
-    int size = file.tellg();
-    file.close();
-
-    return size;
 }
 
 void MainWindow::slotOpen() // функция открытия файла
@@ -62,7 +44,6 @@ void MainWindow::slotCapture()
 
     char error[PCAP_ERRBUF_SIZE]; // массив ошибок
 
-    // открывать рсар файл
     pcap_t *handle = pcap_open_offline(file.toStdString().c_str(), error);
 
     ui->te->append("Список пакетов:");
@@ -72,7 +53,7 @@ void MainWindow::slotCapture()
         struct pcap_pkthdr *header; // структура заголовка
         const u_char *data; // массив храниение данных
 
-        pcap_next_ex(handle, &header, &data);
+        pcap_next_ex(handle,&header,&data);
 
         mPacket[i].mHeaders = new pcap_pkthdr;
         *mPacket[i].mHeaders =* header;
@@ -100,8 +81,6 @@ void MainWindow::slotSort() // функция для сортировки пак
     ui->te->clear();
     if (ui->cbtype->currentText() == "Внутренняя") //внутренняя сортировка пакетов
     {
-        int time = QDateTime::currentMSecsSinceEpoch(); // счетчик времени
-
         if (ui->cb->currentText() == "По длине")
         {
             int h, i, j;
@@ -202,17 +181,10 @@ void MainWindow::slotSort() // функция для сортировки пак
             ui->te->append(QString("Тип обслуживания: %1").arg(mPacket[i].mIp->ip_tos)); //0-2 приоритет данного IP-сегмент
             ui->te->append(QString("\n========================================\n"));
         }
-
-        // выводим результат счетчика
-        ui->time2->clear();
-        time = QDateTime::currentMSecsSinceEpoch() - time;
-        ui->time2->append(QString::number(time));
     }
 
     if (ui->cbtype->currentText() == "sort()") //сортировка пакетов по функции sort()
     {
-        int time = QDateTime::currentMSecsSinceEpoch(); // счетчик времени
-
         if (ui->cb->currentText() == "По длине")
         {
             Packet::choose = 1;
@@ -273,111 +245,60 @@ void MainWindow::slotSort() // функция для сортировки пак
             ui->te->append(QString("Тип обслуживания: %1").arg(mPacket[i].mIp->ip_tos)); //0-2 приоритет данного IP-сегмент
             ui->te->append(QString("\n========================================\n"));
         }
-
-        // выводим результат счетчика
-        ui->time1->clear();
-        time = QDateTime::currentMSecsSinceEpoch() - time;
-        ui->time1->append(QString::number(time));
     }
 
     if (ui->cbtype->currentText() == "Внешняя") //сортировка пакетов по функции sort()
     {
-        int time = QDateTime::currentMSecsSinceEpoch(); // счетчик времени
-
         filebuf buffer;
         ostream output(&buffer);
         istream input(&buffer);
         filedat = "E:/QtProject/pcapproject/example.dat";
         buffer.open (filedat, ios::in | ios::out | ios::trunc);
 
-        /*               for (int i=0; i<n; i++)
-                {
-                    output << mPacket[i].mIndexes << endl;
-                    output << mPacket[i].mHeaders->caplen << endl;
-                    output << mPacket[i].mHeaders->len << endl;
-                    output << mPacket[i].mHeaders->ts.tv_sec << endl;
-                    output << mPacket[i].mHeaders->ts.tv_usec << endl;
-                    output << mPacket[i].mDatas << endl;
-                    output << mPacket[i].mIp->ip_len << endl;
-                    output << mPacket[i].mIp->ip_ttl << endl;
-                    output << mPacket[i].mIp->ip_src.s_addr << endl;
-                    output << mPacket[i].mIp->ip_dst.s_addr << endl;
-                    output << mPacket[i].mIp->ip_vhl << endl;
-                    output << mPacket[i].mIp->ip_sum << endl;
-                    output << mPacket[i].mIp->ip_p << endl;
-                    output << mPacket[i].mIp->ip_tos << endl;
-                    output << endl;
-                }
+        for (int i=0; i<n; i++)
+        {
+            output << mPacket[i].mIndexes << endl;
+            output << mPacket[i].mHeaders->caplen << endl;
+            output << mPacket[i].mHeaders->len << endl;
+            output << mPacket[i].mHeaders->ts.tv_sec << endl;
+            output << mPacket[i].mHeaders->ts.tv_usec << endl;
+            output << mPacket[i].mDatas << endl;
+            output << mPacket[i].mIp->ip_len << endl;
+            output << mPacket[i].mIp->ip_ttl << endl;
+            output << mPacket[i].mIp->ip_src.s_addr << endl;
+            output << mPacket[i].mIp->ip_dst.s_addr << endl;
+            output << mPacket[i].mIp->ip_vhl << endl;
+            output << mPacket[i].mIp->ip_sum << endl;
+            output << mPacket[i].mIp->ip_p << endl;
+            output << mPacket[i].mIp->ip_tos << endl;
+            output << endl;
+        }
 
-                for (int i=0; i<n; i++)
-                {
-                    input.seekg(0); // указатель на начало
-                    input >> mPacket[i].mIndexes;
-                    input >> mPacket[i].mHeaders->caplen;
-                    input >> mPacket[i].mHeaders->len;
-                    input >> mPacket[i].mHeaders->ts.tv_sec;
-                    input >> mPacket[i].mHeaders->ts.tv_usec;
-                    input >> mPacket[i].mDatas;
-                    input >> mPacket[i].mIp->ip_len;
-                    input >> mPacket[i].mIp->ip_ttl;
-                    input >> mPacket[i].mIp->ip_dst.s_addr;
-                    input >> mPacket[i].mIp->ip_src.s_addr;
-                    input >> mPacket[i].mIp->ip_vhl;
-                    input >> mPacket[i].mIp->ip_sum;
-                    input >> mPacket[i].mIp->ip_p;
-                    input >> mPacket[i].mIp->ip_tos;
-                }
-*/
+        for (int i=0; i<n; i++)
+        {
+            input.seekg(0); // указатель на начало
+            input >> mPacket[i].mIndexes;
+            input >> mPacket[i].mHeaders->caplen;
+            input >> mPacket[i].mHeaders->len;
+            input >> mPacket[i].mHeaders->ts.tv_sec;
+            input >> mPacket[i].mHeaders->ts.tv_usec;
+            input >> mPacket[i].mDatas;
+            input >> mPacket[i].mIp->ip_len;
+            input >> mPacket[i].mIp->ip_ttl;
+            input >> mPacket[i].mIp->ip_dst.s_addr;
+            input >> mPacket[i].mIp->ip_src.s_addr;
+            input >> mPacket[i].mIp->ip_vhl;
+            input >> mPacket[i].mIp->ip_sum;
+            input >> mPacket[i].mIp->ip_p;
+            input >> mPacket[i].mIp->ip_tos;
+        }
 
+        input.clear();           // чистим за собой
 
         if (ui->cb->currentText() == "По длине")
         {
-            for (int i=0; i<n; i++)
-            {
-                output << mPacket[i].mIndexes << endl;
-                output << mPacket[i].mIp->ip_len << endl;
-            }
-            Merge (filedat);
+            //Merge (filedat);
         }
-
-        // чистим за собой
-        input.clear();
-
-        for (int i = 0; i < n; i++)
-        {
-            input >> arr[i];
-            input >> null[i];
-        }
-
-        // закрываем файл
-        buffer.close();
-
-        //        for (int i=0; i<n; i++)
-        //        {
-        //           ui->te->append(QString("===== Пакет №%1 =====").arg(mPacket[arr[i]].mIndexes));
-        //            ui->te->append(QString("Длина пакета: %1").arg(mPacket[arr[i]].mHeaders->caplen));
-        //            ui->te->append(QString("Получено: %1").arg(mPacket[arr[i]].mHeaders->len));
-        //            ui->te->append(QString("Метка времени: %1").arg(mPacket[arr[i]].mHeaders->ts.tv_sec));
-        //            ui->te->append(QString("Метка времени (микросек): %1").arg(mPacket[arr[i]].mHeaders->ts.tv_usec));
-
-        //            ui->te->append(QString("========= IP сортировка: ========="));
-        //            ui->te->append(QString("Длина: %1").arg(mPacket[arr[i]].mIp->ip_len));
-        //            ui->te->append(QString("Время жизни: %1").arg(mPacket[arr[i]].mIp->ip_ttl)); // with 1 january 1970
-        //            ui->te->append(QString("Адрес получателя: %1").arg(mPacket[arr[i]].mIp->ip_dst.s_addr));
-        //            ui->te->append(QString("Адрес отправителя: %1").arg(mPacket[arr[i]].mIp->ip_src.s_addr));
-        //            ui->te->append(QString("Длина заголовочной части пакета: %1").arg(mPacket[arr[i]].mIp->ip_vhl));
-        //            ui->te->append(QString("Контрольная сумма: %1").arg(mPacket[arr[i]].mIp->ip_sum));
-        //            ui->te->append(QString("Протокола транспортного уровня: %1").arg(mPacket[arr[i]].mIp->ip_p)); // 6 - TCP, 17 - UDP
-        //            ui->te->append(QString("Тип обслуживания: %1").arg(mPacket[arr[i]].mIp->ip_tos)); //0-2 приоритет данного IP-сегмент
-        //            ui->te->append(QString("\n========================================\n"));
-        //        }
-
-
-        // выводим результат счетчика
-        ui->time3->clear();
-        time = QDateTime::currentMSecsSinceEpoch() - time;
-        ui->time3->append(QString::number(time));
-
     }
 }
 
@@ -387,290 +308,53 @@ void MainWindow::Exchange(int i, int j)
     std::swap(mPacket[i].mHeaders, mPacket[j].mHeaders);
     std::swap(mPacket[i].mDatas, mPacket[j].mDatas);
     std::swap(mPacket[i].mIp, mPacket[j].mIp);
+    // std::swap(mPacket[i].mEthernet, mPacket[j].mEthernet);
+    // std::swap(mPacket[i].mTcp, mPacket[j].mTcp);
+    // std::swap(mPacket[i].mPayload, mPacket[j].mPayload);
 }
 
-//тестовый запись в поток
+//void MainWindow::Merge(const char *filedat)
+//{
+//    filebuf buffer;
+//    ostream output(&buffer);
+//    istream input(&buffer);
 
-void MainWindow::Merge(const char *filedat)
-{
-    unsigned int a1, a2;
-    int Indexes;
-    int   i, j, k, kol, tmp;
+//    int  a1, a2;
+//    int   k, kol, tmp;
+//    QFile f(filedat);
+//    QFile f1("temp1.dat");
+//    QFile f2("temp2.dat");
 
-    //        QFile f(filedat);
-    //        QFile f1("E:/QtProject/pcapproject/temp1.dat");
-    //        QFile f2("E:/QtProject/pcapproject/temp1.dat");
+//    kol = 0;
+//    k = 1;
 
-    const char *f1path = "E:/QtProject/pcapproject/temp1.dat";
-    const char *f2path = "E:/QtProject/pcapproject/temp1.dat";
+//    while (k < kol)
+//    {
+//        f.open (QIODevice::ReadWrite | QIODevice::Text);
+//        f1.open (QIODevice::ReadWrite | QIODevice::Text);
+//        f2.open (QIODevice::ReadWrite | QIODevice::Text);
 
-    filebuf buffer, bufferF1, bufferF2;
-    ostream output(&buffer);
-    ostream outputF1(&bufferF1);
-    ostream outputF2(&bufferF2);
-    istream input(&buffer);
-    istream inputF1(&bufferF1);
-    istream inputF2(&bufferF2);
+//        if (!f.atEnd())
+//            fscanf(f, "%d", &a1);
+//        while (!f.atEnd())
+//        {
+//            for (int i = 0; i < k && !f.atEnd(); i++)
+//            {
+//                fprintf(f1, "%d", a1);
+//                fscanf(f, "%d", &a1);
+//            }
+//            for (int j = 0; j < k && !f.atEnd(); j++)
+//            {
+//                fprintf(f2, "%d", a1);
+//                fscanf(f, "%d", &a1);
+//            }
+//        }
 
-    kol = 0;
-    k = 1;
-
-    while (k < kol)
-    {
-        buffer.open (filedat, ios::in | ios::out | ios::trunc);
-        bufferF1.open (f1path, ios::in | ios::out | ios::trunc);
-        bufferF2.open (f2path, ios::in | ios::out | ios::trunc);
-
-        //        f.open (QIODevice::ReadOnly | QIODevice::Text);
-        //        f1.open (QIODevice::WriteOnly | QIODevice::Text);
-        //        f2.open (QIODevice::WriteOnly | QIODevice::Text);
-
-        if (!filedat == EOF)
-
-        {
-            output << Indexes;
-            output << a1;
-            // a1 = f.read(sizeof(f));
-        }
-
-        while (!filedat == EOF /*!f.atEnd()*/)
-        {
-            for (i = 0; i < k && !filedat == EOF; i++)
-            {
-                inputF1 >> Indexes;
-                inputF1 >> a1;
-                // f1.write(a1);
-
-                output << Indexes;
-                output << a1;
-                // a1 = f.read(sizeof(f));
-            }
-            for (j = 0; j < k && !filedat == EOF; j++)
-            {
-                inputF2 >> Indexes;
-                inputF2 >> a1;
-                // f2.write(a1);
-                output << Indexes;
-                output << a1;
-                // a1 = f.read(sizeof(f));
-            }
-        }
-
-        buffer.close();
-        bufferF1.close();
-        bufferF2.close();
-        //        f.close();
-        //        f1.close();
-        //        f2.close();
-
-
-        buffer.open (filedat, ios::in | ios::out | ios::trunc);
-        bufferF1.open (f1path, ios::in | ios::out | ios::trunc);
-        bufferF2.open (f2path, ios::in | ios::out | ios::trunc);
-        //        f.open (QIODevice::WriteOnly| QIODevice::Text);
-        //        f1.open (QIODevice::ReadOnly | QIODevice::Text);
-        //        f2.open (QIODevice::ReadOnly | QIODevice::Text);
-
-        if (!f1path == EOF)
-        {
-            outputF1 << Indexes;
-            outputF1 << a1;
-            // a1 = f1.read(sizeof(f1));
-        }
-        if (!f2path == EOF)
-        {
-            outputF2 << Indexes;
-            outputF2 << a2;
-            // a2 = f2.read(sizeof(f2));
-        }
-
-        while (!f1path == EOF && !f2path == EOF)
-        {
-            i = 0, j = 0;
-
-            while (i < k && j < k && !f1path == EOF && !f2path == EOF)
-            {
-                if (a1 < a2)
-                {
-                    input >> Indexes;
-                    input >> a1;
-                    // f.write(a1);
-                    outputF1 << Indexes;
-                    outputF1 << a1;
-                    // a1 = f1.read(sizeof(f1));
-                    i++;
-                }
-                else
-                {
-                    input >> Indexes;
-                    input >> a2;
-                    // f.write(a2);
-                    outputF2 << Indexes;
-                    outputF2 << a2;
-                    // a2 = f2.read(sizeof(f2));
-                    j++;
-                }
-            }
-
-            while (i < k && !f1path == EOF)
-            {
-                input >> Indexes;
-                input >> a1;
-                // f.write(a1);
-                outputF1 << Indexes;
-                outputF1 << a1;
-                // a1 = f1.read(sizeof(f1));
-                i++;
-            }
-            while (i < k && !f1path == EOF)
-            {
-                input >> Indexes;
-                input >> a2;
-                // f.write(a2);
-                outputF2 << Indexes;
-                outputF2 << a2;
-                // a2 = f2.read(sizeof(f2));
-                j++;
-            }
-        }
-
-        while (!f1path == EOF)
-        {
-            input >> Indexes;
-            input >> a1;
-            // f.write(a1);
-            outputF1 << Indexes;
-            outputF1 << a1;
-            // a1 = f1.read(sizeof(f1));
-        }
-        while (!f2path == EOF)
-        {
-            input >> Indexes;
-            input >> a2;
-            // f.write(a2);
-            outputF2 << Indexes;
-            outputF2 << a2;
-            // a2 = f2.read(sizeof(f2));
-        }
-
-        buffer.close();
-        bufferF1.close();
-        bufferF2.close();
-        //        f.close();
-        //        f1.close();
-        //        f2.close();
-
-        k *= 2;
-    }
-
-    //    f1.remove();
-    //    f2.remove();
-
-}
-
-// пока что не трогаем
-/*void MainWindow::Merge(const char *filedat)
-{
-    QByteArray a1, a2;
-    int   i, j, k, kol, tmp;
-    QFile f(filedat);
-    QFile f1("E:/QtProject/pcapproject/temp1.dat");
-    QFile f2("E:/QtProject/pcapproject/temp2.dat");
-
-    kol = 0;
-    k = 1;
-
-    while (k < kol)
-    {
-        f.open (QIODevice::ReadOnly | QIODevice::Text);
-        f1.open (QIODevice::WriteOnly | QIODevice::Text);
-        f2.open (QIODevice::WriteOnly | QIODevice::Text);
-
-        if (!f.atEnd())
-            a1 = f.read(sizeof(f));
-
-        while (!f.atEnd())
-        {
-            for (i = 0; i < k && !f.atEnd(); i++)
-            {
-                f1.write(a1);
-                a1 = f.read(sizeof(f));
-            }
-            for (j = 0; j < k && !f.atEnd(); j++)
-            {
-                f2.write(a1);
-                a1 = f.read(sizeof(f));
-            }
-        }
-        f.close();
-        f1.close();
-        f2.close();
-
-        f.open (QIODevice::WriteOnly| QIODevice::Text);
-        f1.open (QIODevice::ReadOnly | QIODevice::Text);
-        f2.open (QIODevice::ReadOnly | QIODevice::Text);
-
-        if (!f1.atEnd())
-            a1 = f1.read(sizeof(f1));
-        if (!f2.atEnd())
-            a2 = f2.read(sizeof(f2));
-
-        while (!f1.atEnd() && !f2.atEnd())
-        {
-            i = 0, j = 0;
-
-            while (i < k && j < k && !f1.atEnd() && !f2.atEnd())
-            {
-                if (a1 < a2)
-                {
-                    f.write(a1);
-                    a1 = f1.read(sizeof(f1));
-                    i++;
-                }
-                else
-                {
-                    f.write(a2);
-                    a2 = f2.read(sizeof(f2));
-                    j++;
-                }
-            }
-
-            while (i < k && !f1.atEnd())
-            {
-                f.write(a1);
-                a1 = f1.read(sizeof(f1));
-                i++;
-            }
-            while (i < k && !f1.atEnd())
-            {
-                f.write(a2);
-                a2 = f2.read(sizeof(f2));
-                j++;
-            }
-        }
-
-        while (!f1.atEnd())
-        {
-            f.write(a1);
-            a1 = f1.read(sizeof(f1));
-        }
-        while (!f2.atEnd())
-        {
-            f.write(a2);
-            a2 = f2.read(sizeof(f2));
-        }
-
-        f.close();
-        f1.close();
-        f2.close();
-
-        k *= 2;
-    }
-    //    f1.remove();
-    //    f2.remove();
-
-}*/
-
+//        f.close();
+//        f1.close();
+//        f2.close();
+//    }
+//}
 
 // перегрузка оператора сравнения
 bool operator < (Packet &obj1, Packet &obj2)
