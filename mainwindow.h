@@ -64,9 +64,7 @@ struct sniff_tcp {
     u_short th_urp;
 };
 
-namespace Ui {
-class MainWindow;
-}
+namespace Ui{class MainWindow;}
 
 class MainWindow : public QMainWindow
 {
@@ -79,18 +77,17 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    //=================================================================
-
     void swap(int i,int j);
-    bool minAddrD(int i,int j);
-    bool minAddrS(int i,int j);
 
     QVector <Packet> mPacket;
     QString file;
     const char *filedat;
+    clock_t time_start, time_end;
 
-    int n = 128;
+    int n = 64;
     int mSize_ip;
+    int arr[sizeof(mPacket)];
+    int null[sizeof(mPacket)];
     //int mSize_ethernet;
     //int mSize_tcp;
 
@@ -99,5 +96,5 @@ private slots:
     void slotCapture();
     void slotSort();
     void Exchange (int i, int j);
-    //void Merge (const char *filedat);
+    void Merge (const char *filedat);
 };
