@@ -23,6 +23,9 @@ public: // инициализвция класса
     const uchar        *mPayload;
     int                 mIndexes;
 
+// байты для IPv4
+        unsigned int IPv4_dataLen;
+
     // оперотор присваивание
     Packet operator = (Packet &obj);
     Packet operator = (const Packet &obj);
