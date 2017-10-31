@@ -42,9 +42,6 @@ ostream &operator << (ostream &stream, Packet &obj)
     stream.write((char* )&obj.mHeaders, sizeof(long int));
     stream.write((char* )&obj.mDatas, sizeof(&obj.mHeaders));
     stream.write((char* )&obj.mIp, sizeof(long int));
-
-// для IPv4
-    stream.write((char* )&obj.IPv4_dataLen, sizeof(unsigned int));
 }
 
 istream &operator >> (istream &stream, Packet &obj)
@@ -61,9 +58,6 @@ istream &operator >> (istream &stream, Packet &obj)
     //    stream.read((char* )&obj.mIp->ip_sum, sizeof(long int));
     //    stream.read((char* )&obj.mIp->ip_p, sizeof(long int));
     //    stream.read((char* )&obj.mIp->ip_tos, sizeof(long int));
-
-    // для IPv4
-        stream.read((char* )&obj.IPv4_dataLen, sizeof(unsigned int));
 }
 
 int Packet::choose;

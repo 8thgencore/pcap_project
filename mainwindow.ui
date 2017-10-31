@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>578</width>
+    <width>415</width>
     <height>644</height>
    </rect>
   </property>
@@ -50,7 +50,7 @@
      <rect>
       <x>10</x>
       <y>490</y>
-      <width>391</width>
+      <width>491</width>
       <height>141</height>
      </rect>
     </property>
@@ -62,7 +62,7 @@
       <rect>
        <x>120</x>
        <y>80</y>
-       <width>261</width>
+       <width>271</width>
        <height>22</height>
       </rect>
      </property>
@@ -125,7 +125,7 @@
       <rect>
        <x>120</x>
        <y>50</y>
-       <width>261</width>
+       <width>271</width>
        <height>22</height>
       </rect>
      </property>
@@ -140,7 +140,7 @@
       <rect>
        <x>120</x>
        <y>20</y>
-       <width>261</width>
+       <width>271</width>
        <height>22</height>
       </rect>
      </property>
@@ -151,12 +151,12 @@
      </item>
      <item>
       <property name="text">
-       <string>Внешняя</string>
+       <string>Внутренняя</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Внутренняя</string>
+       <string>Внешняя</string>
       </property>
      </item>
     </widget>
@@ -225,103 +225,6 @@
     <property name="text">
      <string>pcap_sort v.0.3</string>
     </property>
-   </widget>
-   <widget class="QGroupBox" name="groupBox_2">
-    <property name="geometry">
-     <rect>
-      <x>410</x>
-      <y>10</y>
-      <width>161</width>
-      <height>181</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="title">
-     <string>Время сортировки (мс):</string>
-    </property>
-    <widget class="QLabel" name="label_5">
-     <property name="geometry">
-      <rect>
-       <x>11</x>
-       <y>21</y>
-       <width>32</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>sort()</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_7">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>120</y>
-       <width>137</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Внешняя</string>
-     </property>
-    </widget>
-    <widget class="QTextEdit" name="time1">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>40</y>
-       <width>137</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QTextEdit" name="time3">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>140</y>
-       <width>137</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_6">
-     <property name="geometry">
-      <rect>
-       <x>11</x>
-       <y>70</y>
-       <width>68</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Внутренняя</string>
-     </property>
-    </widget>
-    <widget class="QTextEdit" name="time2">
-     <property name="geometry">
-      <rect>
-       <x>11</x>
-       <y>90</y>
-       <width>137</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
    </widget>
   </widget>
  </widget>
