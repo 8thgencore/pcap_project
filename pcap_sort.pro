@@ -22,8 +22,7 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
-INCLUDEPATH += "E:\QtProject\pcapproject\WpdPack\Include"
-INCLUDEPATH += "E:\QtProject\pcapproject\WpdPack\Lib"
-LIBS += -L"E:\QtProject\pcapproject\WpdPack\Lib" -lwpcap -lpacket
+INCLUDEPATH += "E:\..\WpdPack\Include"
+LIBS += -L"E:\..\WpdPack\Lib" -lwpcap -lpacket
 
 DEFINES += WPCAP HAVE_REMOTE
